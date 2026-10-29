@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebGIS Qualidade das Águas — MS 2024</title>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.css">
+<link rel="stylesheet" href="style.css">
+<script src="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js"></script>
+</head>
+<body>
+
+<header id="topbar">
+  <div class="brand">
+    <span class="brand-icon">💧</span>
+    <div>
+      <h1>Qualidade das Águas — Mato Grosso do Sul</h1>
+      <p>Monitoramento IMASUL · 2024 · Índice de Qualidade da Água (IQA)</p>
+    </div>
+  </div>
+  <div id="contador" class="pill">Carregando dados…</div>
+</header>
+
+<div id="layout">
+
+  <!-- ============ BARRA LATERAL ============ -->
+  <aside id="sidebar">
+    <nav class="tabs" role="tablist">
+      <button class="tab-btn active" data-aba="filtros" role="tab">🔎 Filtros</button>
+      <button class="tab-btn" data-aba="sobre" role="tab">ℹ️ Como ler</button>
+    </nav>
+
+    <!-- FILTROS -->
+    <section id="aba-filtros" class="tab-content active">
+      <h3>O que o mapa mostra</h3>
+      <div class="form-group">
+        <label for="filtro-criterio">Cor dos pontos (IQA de…)</label>
+        <select id="filtro-criterio">
+          <option value="t1">1º trimestre</option>
+          <option value="t2">2º trimestre</option>
+          <option value="t3">3º trimestre</option>
+          <option value="t4">4º trimestre</option>
+        </select>
+      </div>
+
+      <h3>Filtrar estações</h3>
+      <div class="form-group">
+        <label for="filtro-regiao">Região hidrográfica</label>
+        <select id="filtro-regiao"><option value="">Todas</option></select>
+      </div>
+      <div class="form-group">
+        <label for="filtro-upg">UPG (Unidade de Planejamento)</label>
+        <select id="filtro-upg"><option value="">Todas</option></select>
+      </div>
+      <div class="form-group">
+        <label for="filtro-classe">Classe legal (CONAMA 357)</label>
+        <select id="filtro-classe"><option value="">Todas</option></select>
+      </div>
+      <div class="form-group">
+        <label for="filtro-qualidade">Faixa de qualidade</label>
+        <select id="filtro-qualidade">
+          <option value="">Todas</option>
+          <option>Ótima</option><option>Boa</option><option>Aceitável</option>
+          <option>Ruim</option><option>Péssima</option><option>Sem faixa no CSV</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="busca">Buscar (código, rio ou município)</label>
+        <input type="text" id="busca" placeholder="Ex.: Amambai" autocomplete="off">
+      </div>
+      <label class="checkbox-group"><input type="checkbox" id="toggle-bacias" checked> Mostrar limites das bacias</label>
+
+      <button class="btn btn-secondary" id="btn-limpar">Limpar filtros</button>
+      <button class="btn btn-primary" id="btn-csv">⬇ Exportar dados filtrados (CSV)</button>
+    </section>
+
+    <!-- SOBRE -->
+    <section id="aba-sobre" class="tab-content">
+      <h3>Faixas do IQA</h3>
+      <table class="faixas-tabela" id="tabela-faixas"></table>
+      <h3>Como ler os dados</h3>
+      <ul class="notas">
+        <li>Cada ponto é uma estação; a cor indica a <code>qualidade_faixa</code> do CSV no trimestre escolhido em <b>Filtros</b>.</li>
+        <li>Clique em um ponto para abrir a ficha completa com os 4 trimestres.</li>
+        <li><b>&lt;</b> = valor abaixo do limite de quantificação (LQ do laboratório).</li>
+        <li><b>—</b> = sem valor no CSV.</li>
+      </ul>
+      <h3>Procedência dos dados</h3>
+      <dl class="procedencia">
+        <dt>Fonte</dt><dd>IMASUL</dd>
+        <dt>Ano</dt><dd>2024</dd>
+        <dt>Estações lidas</dt><dd id="proc-estacoes">—</dd>
+        <dt>Registros lidos</dt><dd id="proc-registros">—</dd>
+        <dt>Sistema de coordenadas</dt><dd>WGS 84 (<span id="proc-crs">—</span>)</dd>
+        <dt>Arquivos originais</dt>
+        <dd>
+          <a href="data/estacoes_imasul_2024.geojson" download>estacoes_imasul_2024.geojson</a><br>
+          <a href="data/medicoes_imasul_2024.csv" download>medicoes_imasul_2024.csv</a>
+        </dd>
+      </dl>
+    </section>
+  </aside>
+
+  <!-- ============ MAPA ============ -->
+  <main id="mapa-wrap">
+    <div id="map"></div>
+
+    <div id="basemaps" class="segmented" role="group" aria-label="Mapa base">
+      <button data-base="osm" class="active">Ruas</button>
+      <button data-base="satelite">Satélite</button>
+    </div>
+
+    <div id="aviso-dados" class="hidden" role="status"></div>
+
+    <div id="legenda">
+      <b>Qualidade (IQA)</b>
+      <div id="legenda-itens"></div>
+    </div>
+
+    <!-- FICHA DA ESTAÇÃO -->
+    <aside id="detalhe" class="hidden" aria-live="polite">
+      <button id="detalhe-fechar" aria-label="Fechar">×</button>
+      <div id="detalhe-conteudo"></div>
+    </aside>
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

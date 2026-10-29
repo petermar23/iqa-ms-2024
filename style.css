@@ -1,0 +1,145 @@
+:root {
+  --primary: #0b5cad;
+  --primary-dark: #084a8c;
+  --bg: #f4f6f8;
+  --panel: #ffffff;
+  --text: #1f2933;
+  --muted: #5b6770;
+  --border: #d9dee3;
+  --sidebar-w: 360px;
+  --topbar-h: 56px;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; color: var(--text); background: var(--bg);
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  font-size: 14px; display: flex; flex-direction: column;
+}
+button { font-family: inherit; }
+
+/* ---------- Topbar ---------- */
+#topbar {
+  height: var(--topbar-h); flex: none; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; background: var(--primary); color: #fff; z-index: 5;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-icon { font-size: 24px; }
+.brand h1 { margin: 0; font-size: 16px; font-weight: 700; }
+.brand p { margin: 0; font-size: 12px; opacity: .85; }
+.pill { background: rgba(255,255,255,.18); padding: 6px 12px; border-radius: 999px; font-weight: 600; font-size: 13px; white-space: nowrap; }
+
+/* ---------- Layout ---------- */
+#layout { flex: 1; min-height: 0; display: flex; }
+#sidebar {
+  width: var(--sidebar-w); flex: none; background: var(--panel);
+  border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 4;
+}
+#mapa-wrap { flex: 1; position: relative; min-width: 0; }
+#map { position: absolute; inset: 0; }
+
+/* ---------- Abas ---------- */
+.tabs { display: flex; border-bottom: 1px solid var(--border); flex: none; }
+.tab-btn {
+  flex: 1; padding: 12px 6px; border: none; background: none; cursor: pointer;
+  font-weight: 600; color: var(--muted); font-size: 13px; border-bottom: 3px solid transparent;
+}
+.tab-btn:hover { background: #f1f4f7; }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab-content { padding: 16px; overflow-y: auto; display: none; flex: 1; }
+.tab-content.active { display: block; }
+h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin: 18px 0 8px; }
+h3:first-child { margin-top: 0; }
+
+.dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,.25); flex: none; }
+
+/* ---------- Formulário ---------- */
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+select, input[type=text] {
+  width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: #fff;
+}
+select:focus, input[type=text]:focus, button:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+.checkbox-group { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; margin-top: 10px; }
+.checkbox-group input { width: 16px; height: 16px; margin: 0; }
+.btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 13px; margin-top: 10px; }
+.btn-primary { background: var(--primary); color: #fff; } .btn-primary:hover { background: var(--primary-dark); }
+.btn-secondary { background: #e9edf0; color: var(--text); } .btn-secondary:hover { background: #dbe1e6; }
+
+/* ---------- Sobre ---------- */
+.faixas-tabela { width: 100%; border-collapse: collapse; }
+.faixas-tabela td { padding: 6px 4px; border-bottom: 1px solid #eef0f2; }
+.faixas-tabela td:last-child { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+.notas { padding-left: 18px; margin: 0; line-height: 1.5; }
+.notas li { margin-bottom: 6px; }
+.procedencia { margin: 0; font-size: 13px; }
+.procedencia dt { font-size: 11px; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+.procedencia dd { margin: 2px 0 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.procedencia a { color: var(--primary); font-weight: 400; }
+#aviso-dados {
+  position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); z-index: 2; max-width: 70%;
+  background: rgba(255,255,255,.94); color: var(--muted); font-size: 11px; padding: 3px 10px; border-radius: 999px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.25);
+}
+#aviso-dados.hidden { display: none; }
+
+/* ---------- Controles do mapa ---------- */
+.segmented {
+  position: absolute; top: 10px; left: 10px; z-index: 2; display: flex; background: #fff; border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25); overflow: hidden;
+}
+.segmented button { border: none; background: none; padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted); }
+.segmented button.active { background: var(--primary); color: #fff; }
+.segmented button:not(.active):hover { background: #eef1f4; }
+
+#legenda {
+  position: absolute; bottom: 28px; left: 10px; z-index: 2; background: rgba(255,255,255,.96);
+  padding: 10px 12px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.25); font-size: 13px;
+}
+#legenda b { display: block; margin-bottom: 6px; font-size: 12px; text-transform: uppercase; color: var(--muted); }
+.leg-linha { display: flex; align-items: center; gap: 8px; margin: 3px 0; font-weight: 600; }
+.leg-linha small { color: var(--muted); font-weight: 400; margin-left: auto; padding-left: 12px; font-variant-numeric: tabular-nums; }
+
+/* ---------- Ficha da estação ---------- */
+#detalhe {
+  position: absolute; top: 10px; right: 10px; bottom: 28px; width: 500px; max-width: calc(100% - 20px); z-index: 3;
+  background: var(--panel); border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.3);
+  overflow-y: auto; transition: transform .2s, opacity .2s;
+}
+#detalhe.hidden { transform: translateX(110%); opacity: 0; pointer-events: none; }
+#detalhe-fechar {
+  position: absolute; top: 8px; right: 10px; z-index: 2; width: 30px; height: 30px; border-radius: 50%; border: none;
+  background: rgba(255,255,255,.25); color: #fff; font-size: 22px; line-height: 1; cursor: pointer;
+}
+#detalhe-fechar:hover { background: rgba(255,255,255,.45); }
+.ficha-head { background: var(--primary); color: #fff; padding: 14px 48px 14px 16px; }
+.ficha-head h2 { margin: 0; font-size: 17px; }
+.ficha-head .cod { font-size: 12px; opacity: .85; font-family: Consolas, monospace; margin-top: 2px; }
+.ficha-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; padding: 12px 16px; background: var(--bg); border-bottom: 1px solid var(--border); }
+.ficha-meta div span { display: block; font-size: 11px; text-transform: uppercase; color: var(--muted); }
+.ficha-meta div b { font-size: 13px; }
+.ficha-corpo { padding: 14px 16px 18px; }
+
+.dados { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 8px; }
+.dados th, .dados td { padding: 6px 5px; border-bottom: 1px solid #eceff1; text-align: center; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dados th { background: var(--bg); font-size: 11px; text-transform: uppercase; color: var(--muted); position: sticky; top: 0; }
+.dados td:first-child, .dados th:first-child { text-align: left; }
+.dados tr.grupo td { background: #eef3f8; font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--primary); text-align: left; }
+.dados small { color: var(--muted); overflow-wrap: anywhere; }
+.legenda-tab { font-size: 12px; color: var(--muted); margin: 0 0 14px; }
+.badge { padding: 3px 8px; border-radius: 4px; color: #fff; font-weight: 700; font-size: 12px; display: inline-block; min-width: 34px; }
+.ficha-corpo h4 { margin: 14px 0 6px; font-size: 12px; text-transform: uppercase; color: var(--muted); }
+
+/* tooltip de hover */
+.maplibregl-popup-content { padding: 8px 10px; border-radius: 8px; font-size: 13px; }
+.tip b { display: block; }
+.tip span { color: var(--muted); font-size: 12px; }
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 800px) {
+  #layout { flex-direction: column-reverse; }
+  #sidebar { width: 100%; height: 42%; border-right: none; border-top: 1px solid var(--border); }
+  .brand p { display: none; }
+  #detalhe { width: auto; left: 10px; bottom: 10px; }
+}
