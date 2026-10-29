@@ -1,4 +1,4 @@
-# Qualidade das Águas — Mato Grosso do Sul (2024)
+# Qualidade das Águas — Mato Grosso do Sul (2024)   https://www.imasul.ms.gov.br/wp-content/uploads/2025/06/Boletim_Qual_Agua_Sup_2024-1.pdf
 
 WebGIS estático para visualização espacial dos dados públicos de monitoramento da qualidade das águas superficiais do Estado de Mato Grosso do Sul, referentes ao ano de 2024.
 
