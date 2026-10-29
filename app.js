@@ -60,7 +60,8 @@ function criarMapa() {
 
 function mudarBasemap(tipo) {
   if (map.getLayer("fundo")) map.removeLayer("fundo");
-  map.addLayer({ id: "fundo", type: "raster", source: tipo }, map.getLayer("bacias-fill") ? "bacias-fill" : undefined);
+  const primeiroVetor = ["bacias-fill", "rios-linhas", "estacoes-pontos"].find(id => map.getLayer(id));
+  map.addLayer({ id: "fundo", type: "raster", source: tipo }, primeiroVetor);
   document.querySelectorAll("#basemaps button").forEach(b => b.classList.toggle("active", b.dataset.base === tipo));
 }
 
@@ -95,10 +96,11 @@ async function buscar(url) {
 
 async function carregarDados() {
   try {
-    const [geo, csvText, baciasGeo] = await Promise.all([
+    const [geo, csvText, baciasGeo, riosGeo] = await Promise.all([
       buscar("data/estacoes_imasul_2024.geojson").then(r => r.json()),
       buscar("data/medicoes_imasul_2024.csv").then(r => r.text()),
-      buscar("data/bacias_ms.geojson").then(r => r.json())
+      buscar("data/bacias_ms.geojson").then(r => r.json()),
+      buscar("data/rios_ms.geojson").then(r => r.json())
     ]);
 
     const tabela = parseCSV(csvText);
@@ -127,6 +129,7 @@ async function carregarDados() {
 
     preencherProcedencia(geo, tabela.length - 1, historico);
     adicionarBacias(baciasGeo);
+    adicionarRios(riosGeo);
     popularFiltros();
     adicionarCamadasEstacoes();
     aplicarFiltros();
@@ -164,6 +167,40 @@ function adicionarBacias(geo) {
   map.addSource("bacias", { type: "geojson", data: geo });
   map.addLayer({ id: "bacias-fill", type: "fill", source: "bacias", paint: { "fill-color": "#1a73e8", "fill-opacity": 0.05 } });
   map.addLayer({ id: "bacias-line", type: "line", source: "bacias", paint: { "line-color": "#0b5cad", "line-width": 1.5, "line-dasharray": [2, 2] } });
+}
+
+function adicionarRios(geo) {
+  map.addSource("rios", { type: "geojson", data: geo });
+  map.addLayer({
+    id: "rios-linhas",
+    type: "line",
+    source: "rios",
+    paint: {
+      "line-color": "#1f78b4",
+      "line-opacity": 0.7,
+      "line-width": [
+        "interpolate", ["linear"], ["zoom"],
+        5, ["case", ["==", ["get", "dominio"], "União"], 1.5, 0.7],
+        10, ["case", ["==", ["get", "dominio"], "União"], 3.0, 1.8],
+        14, ["case", ["==", ["get", "dominio"], "União"], 5.0, 3.0]
+      ]
+    }
+  });
+
+  /* Tooltip ao passar o mouse sobre o rio */
+  map.on("mouseenter", "rios-linhas", e => {
+    map.getCanvas().style.cursor = "pointer";
+    const props = e.features[0].properties;
+    if (props.nome_rio && props.nome_rio !== "sem nome") {
+      tooltip.setLngLat(e.lngLat).setHTML(
+        `<div class="tip"><b>🌊 ${escapeHtml(props.nome_rio)}</b><span>Domínio: ${escapeHtml(props.dominio || "—")}</span></div>`
+      ).addTo(map);
+    }
+  });
+  map.on("mouseleave", "rios-linhas", () => {
+    map.getCanvas().style.cursor = "";
+    tooltip.remove();
+  });
 }
 
 function popularFiltros() {
@@ -387,6 +424,10 @@ function ligarEventos() {
   $("toggle-bacias").addEventListener("change", e => {
     const v = e.target.checked ? "visible" : "none";
     ["bacias-fill", "bacias-line"].forEach(id => map.getLayer(id) && map.setLayoutProperty(id, "visibility", v));
+  });
+  $("toggle-rios").addEventListener("change", e => {
+    const v = e.target.checked ? "visible" : "none";
+    map.getLayer("rios-linhas") && map.setLayoutProperty("rios-linhas", "visibility", v);
   });
   document.addEventListener("keydown", e => { if (e.key === "Escape") fecharFicha(); });
 }
